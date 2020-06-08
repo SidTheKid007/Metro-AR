@@ -15,6 +15,6 @@
  **Solution** - This creates simple and convienient navigation access for metro users.
 
 ## Contents
- [Overall Map](/tree/master/Overall%20Map) - This branch contains the Spark Files just related to the overall map.
+ [Overall Map](/Overall%20Map) - This branch contains the Spark Files just related to the overall map.
  
- [Station Map](/tree/master/Station%20MapMap) - This branch contains the Spark Files just related to the station map.
+ [Station Map](/Station%20Map) - This branch contains the Spark Files just related to the station map.
