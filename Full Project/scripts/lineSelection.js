@@ -20,7 +20,7 @@ const stationJSON = {
     'Arcadia' : {
         'Food' : 'Din Tai Fung',
         'Attraction' : 'RaceTrack',
-        'Time' : 200
+        'Time' : 10
     }
 };
 var bestFood = ""
@@ -28,6 +28,7 @@ var bestAttraction = ""
 var nextTime = 0
 
 var pickerVisible = false
+var animateOnce = false
 Patches.setBooleanValue('pickerVisible', pickerVisible);
 
 const timePassed = Patches.getScalarValue('timePassed');
@@ -45,10 +46,7 @@ Promise.all([
     sceneRoot.findFirst('arcadiaMap'),
     sceneRoot.findFirst('stationBox'),
     sceneRoot.findFirst('stationInfoText'),
-    //textures.findFirst('noText'),
-    //textures.findFirst('food'),
-    //textures.findFirst('attractions'),
-    //textures.findFirst('time')
+    sceneRoot.findFirst('stationTrain')
 ])
 .then(function(objects) {
     const arcadiaBgObj = objects[0];
@@ -60,10 +58,9 @@ Promise.all([
     const arcadiaMap = objects[6];
     const stationBox = objects[7];
     const stationText = objects[8];
-    //const noInfoChoice = objects[9];
-    //const bestFoodChoice = objects[10];
-    //const bestAttractionChoice = objects[11];
-    //const nextTrainChoice = objects[12];
+    const stationTrain = objects[9];
+    const trainTransform = stationTrain.transform;
+    
 
     TouchGestures.onTap(arcadiaBgObj).subscribe(function (gesture) {
         verifyBox.hidden = false;
@@ -94,11 +91,29 @@ Promise.all([
             var minutes = Math.floor(timeLeft / 60);
             var seconds = (timeLeft - 60*minutes);
             stationBox.hidden = false;
-            if (seconds < 10) {
+            if (((minutes == 0 && seconds == 0) || (minutes < 0)) && !(animateOnce)) {
+            	stationText.text = 'Train has arrived!';
+            	animateOnce = true;
+            	stationTrain.hidden = false;
+            }
+        	else if (seconds < 10 && !(animateOnce)) {
                 stationText.text = 'Next Train:\n' + minutes.toString() + ':0' + seconds.toString();
             }
             else {
-                stationText.text = 'Next Train:\n' + minutes.toString() + ':' + seconds.toString();
+            	if (!(animateOnce)) {
+            		stationText.text = 'Next Train:\n' + minutes.toString() + ':' + seconds.toString();
+            	}
+            	else {
+            		stationText.text = 'Train has arrived!';
+            		var trainXPos = -.18 + ((1/100) * (event.newValues["0"] - nextTime))
+            		var trainYPos = .13 - ((1/100) * (event.newValues["0"] - nextTime))
+            		if (trainXPos < .16) {
+            			trainTransform.x = trainXPos
+            		}
+            		if (trainYPos > -.15) {
+            			trainTransform.y = trainYPos
+            		}
+            	}
             }
         }
         else if (event.newValues["1"] == 2) {
