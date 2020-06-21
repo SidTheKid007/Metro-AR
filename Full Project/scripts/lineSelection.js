@@ -65,7 +65,9 @@ Promise.all([
     sceneRoot.findFirst('resultingDirectionsText'),
     sceneRoot.findFirst('exitDirection'),
     sceneRoot.findFirst('directionsBox'),
-    sceneRoot.findFirst('key-directionSwitch')
+    sceneRoot.findFirst('key-directionSwitch'),
+    sceneRoot.findFirst('fromLocationBox'),
+    sceneRoot.findFirst('toLocationBox')
     // Add comments later
 ])
 .then(function(objects) {
@@ -88,7 +90,8 @@ Promise.all([
     const exitDirection = objects[15];
     const directionsBox = objects[16];
     const directionSwitch = objects[17];
-
+    const fromLocationBox = objects[18];
+    const toLocationBox = objects[19];
 
     TouchGestures.onTap(arcadiaBgObj).subscribe(function (gesture) {
         verifyBox.hidden = false;
@@ -110,13 +113,13 @@ Promise.all([
         bestAttraction = stationJSON[pickedStation]['Attraction'];
         nextTime = stationJSON[pickedStation]['Time'];
     });
-    TouchGestures.onTap(fromLocationText).subscribe(function () {
+    TouchGestures.onTap(fromLocationBox).subscribe(function (gesture) {
         NativeUI.enterTextEditMode('fromLocationText');
     });
     NativeUI.getText('fromLocationText').monitor().subscribe(function(textUpdate){
     	startStation = textUpdate.newValue;
     });
-    TouchGestures.onTap(toLocationText).subscribe(function () {
+    TouchGestures.onTap(toLocationBox).subscribe(function (gesture) {
         NativeUI.enterTextEditMode('toLocationText');
     });
     NativeUI.getText('toLocationText').monitor().subscribe(function(textUpdate){
