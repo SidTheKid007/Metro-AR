@@ -4,23 +4,33 @@ const Patches = require('Patches');
 const Diagnostics = require('Diagnostics');
 const Materials = require('Materials');
 const TouchGestures = require('TouchGestures');
+const NativeUI = require('NativeUI');
 //const Networking = require('Networking');
 const textures = require("Textures")
 
 const sceneRoot = Scene.root;
-const generalText = "Are you sure you want \n";
+const generalText = 'Are you sure you want \n';
 var pickedStation = 'None'
+
+var startStation = ''
+var endStation = ''
 
 const stationJSON = {
     'None' : {
         'Food' : 'None',
         'Attraction' : 'None',
-        'Time' : 300
+        'Time' : 300,
+        'Directions' : {
+        	'Compton' : 'None -> Compton'
+        }
     },
     'Arcadia' : {
         'Food' : 'Din Tai Fung',
         'Attraction' : 'RaceTrack',
-        'Time' : 10
+        'Time' : 70,
+        'Directions' : {
+        	'Compton' : 'Gold Line:\n Arcadia -> Union Station\nRed Line:\n Union Station -> 7th St\nBlue Line:\n 7th St -> Compton'
+        }
     }
 };
 var bestFood = ""
@@ -46,7 +56,17 @@ Promise.all([
     sceneRoot.findFirst('arcadiaMap'),
     sceneRoot.findFirst('stationBox'),
     sceneRoot.findFirst('stationInfoText'),
-    sceneRoot.findFirst('stationTrain')
+    sceneRoot.findFirst('stationTrain'),
+    //Direction Box Assets
+    sceneRoot.findFirst('fromLocationText'),
+    sceneRoot.findFirst('toLocationText'),
+    sceneRoot.findFirst('submitDirection'),
+    sceneRoot.findFirst('resultingDirectionsBox'),
+    sceneRoot.findFirst('resultingDirectionsText'),
+    sceneRoot.findFirst('exitDirection'),
+    sceneRoot.findFirst('directionsBox'),
+    sceneRoot.findFirst('key-directionSwitch')
+    // Add comments later
 ])
 .then(function(objects) {
     const arcadiaBgObj = objects[0];
@@ -60,7 +80,15 @@ Promise.all([
     const stationText = objects[8];
     const stationTrain = objects[9];
     const trainTransform = stationTrain.transform;
-    
+    const fromLocationText = objects[10];
+    const toLocationText = objects[11];
+    const submitDirection = objects[12];
+    const resultingDirectionsBox = objects[13];
+    const resultingDirectionsText = objects[14];
+    const exitDirection = objects[15];
+    const directionsBox = objects[16];
+    const directionSwitch = objects[17];
+
 
     TouchGestures.onTap(arcadiaBgObj).subscribe(function (gesture) {
         verifyBox.hidden = false;
@@ -82,7 +110,44 @@ Promise.all([
         bestAttraction = stationJSON[pickedStation]['Attraction'];
         nextTime = stationJSON[pickedStation]['Time'];
     });
+    TouchGestures.onTap(fromLocationText).subscribe(function () {
+        NativeUI.enterTextEditMode('fromLocationText');
+    });
+    NativeUI.getText('fromLocationText').monitor().subscribe(function(textUpdate){
+    	startStation = textUpdate.newValue;
+    });
+    TouchGestures.onTap(toLocationText).subscribe(function () {
+        NativeUI.enterTextEditMode('toLocationText');
+    });
+    NativeUI.getText('toLocationText').monitor().subscribe(function(textUpdate){
+    	endStation = textUpdate.newValue;
+    });
+    TouchGestures.onTap(submitDirection).subscribe(function (gesture) {
+        resultingDirectionsBox.hidden = false;
+        // do some json checking
+        //resultingDirectionsText.text = startStation + "\n" + endStation;
+        if (stationJSON.hasOwnProperty(startStation)){
+        	const fromStationJson = stationJSON[startStation]['Directions'];
+        	if (fromStationJson.hasOwnProperty(endStation)){
+        		resultingDirectionsText.text = fromStationJson[endStation];
+        	}
+        	else {
+        		resultingDirectionsText.text = startStation + " ->\n" + endStation;
+        	}
+        }
+        else {
+        	resultingDirectionsText.text = startStation + " ->\n" + endStation;
+        }
+    });
+    TouchGestures.onTap(exitDirection).subscribe(function (gesture) {
+        resultingDirectionsBox.hidden = true;
+        directionsBox.hidden = true;
+    });
+    TouchGestures.onTap(directionSwitch).subscribe(function (gesture) {
+        directionsBox.hidden = false;
+    });
     Reactive.monitorMany([timePassed, choicePicked]).subscribe(function(event) {
+    	// clean this by setting the new val things to actual names
         if (event.newValues["1"] == 0) {
         	stationBox.hidden = true;
         }
