@@ -27,9 +27,17 @@ const stationJSON = {
     'Arcadia' : {
         'Food' : 'Din Tai Fung',
         'Attraction' : 'RaceTrack',
-        'Time' : 70,
+        'Time' : 50,
         'Directions' : {
         	'Compton' : 'Gold Line:\n Arcadia -> Union Station\nRed Line:\n Union Station -> 7th St\nBlue Line:\n 7th St -> Compton'
+        }
+    },
+    'Metro Center' : {
+        'Food' : 'Hatch Yakitori',
+        'Attraction' : 'Fine Arts Building',
+        'Time' : 40,
+        'Directions' : {
+        	'Arcadia' : 'Red Line:\n 7th St -> Union Station\Gold Line:\n Union Station -> Arcadia'
         }
     }
 };
@@ -53,7 +61,7 @@ Promise.all([
     sceneRoot.findFirst('yesOption'),
     sceneRoot.findFirst('FullMap'),
     //Station Map Assets
-    sceneRoot.findFirst('arcadiaMap'),
+    sceneRoot.findFirst('arcadiaMapImage'),
     sceneRoot.findFirst('stationBox'),
     sceneRoot.findFirst('stationInfoText'),
     sceneRoot.findFirst('stationTrain'),
@@ -67,7 +75,10 @@ Promise.all([
     sceneRoot.findFirst('directionsBox'),
     sceneRoot.findFirst('key-directionSwitch'),
     sceneRoot.findFirst('fromLocationBox'),
-    sceneRoot.findFirst('toLocationBox')
+    sceneRoot.findFirst('toLocationBox'),
+    //Other Stations
+    sceneRoot.findFirst('select-MetroCenter'),
+    sceneRoot.findFirst('otherMapImage')
     // Add comments later
 ])
 .then(function(objects) {
@@ -77,7 +88,7 @@ Promise.all([
     const noChoice = objects[3];
     const yesChoice = objects[4];
     const overallMap = objects[5];
-    const arcadiaMap = objects[6];
+    const arcadiaStationMap = objects[6];
     const stationBox = objects[7];
     const stationText = objects[8];
     const stationTrain = objects[9];
@@ -92,11 +103,20 @@ Promise.all([
     const directionSwitch = objects[17];
     const fromLocationBox = objects[18];
     const toLocationBox = objects[19];
+    const metroCenterBgObj = objects[20];
+    const otherMapImage = objects[21];
 
     TouchGestures.onTap(arcadiaBgObj).subscribe(function (gesture) {
         verifyBox.hidden = false;
+        directionsBox.hidden = true;
         verifyText.text = generalText + "Arcadia Station?";
         pickedStation = 'Arcadia';
+    });
+    TouchGestures.onTap(metroCenterBgObj).subscribe(function (gesture) {
+        verifyBox.hidden = false;
+        directionsBox.hidden = true;
+        verifyText.text = generalText + "Metro Center?";
+        pickedStation = 'Metro Center';
     });
     TouchGestures.onTap(noChoice).subscribe(function (gesture) {
         verifyBox.hidden = true;
@@ -105,7 +125,10 @@ Promise.all([
         verifyBox.hidden = true;
         overallMap.hidden = true;
         if (pickedStation == 'Arcadia') {
-            arcadiaMap.hidden = false;
+        	arcadiaStationMap.hidden = false;
+        }
+        else {
+        	otherMapImage.hidden = false;
         }
         pickerVisible = true
 		Patches.setBooleanValue('pickerVisible', pickerVisible);
@@ -148,6 +171,7 @@ Promise.all([
     });
     TouchGestures.onTap(directionSwitch).subscribe(function (gesture) {
         directionsBox.hidden = false;
+        verifyBox.hidden = true;
     });
     Reactive.monitorMany([timePassed, choicePicked]).subscribe(function(event) {
     	// clean this by setting the new val things to actual names
@@ -173,12 +197,12 @@ Promise.all([
             	}
             	else {
             		stationText.text = 'Train has arrived!';
-            		var trainXPos = -.18 + ((1/100) * (event.newValues["0"] - nextTime))
-            		var trainYPos = .13 - ((1/100) * (event.newValues["0"] - nextTime))
-            		if (trainXPos < .16) {
+            		var trainXPos = -.26 + ((1/50) * (event.newValues["0"] - nextTime))
+            		var trainYPos = .26 - ((1/50) * (event.newValues["0"] - nextTime))
+            		if (trainXPos < .01) {
             			trainTransform.x = trainXPos
             		}
-            		if (trainYPos > -.15) {
+            		if (trainYPos > .01) {
             			trainTransform.y = trainYPos
             		}
             	}
