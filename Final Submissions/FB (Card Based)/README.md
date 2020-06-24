@@ -10,7 +10,7 @@
 ## Summary
  **Problem** - Ease of access to metro/subway information in certain cities’ subway networks.
 
- **Product** - AR projection of the Metro network on the map that includes interactivity and directions. When at a specific station within the network, it will provide more details on that station (Time to next train, best local attraction, best local restaraunt).
+ **Product** - AR projection facebook filter of the Metro network on the map that includes interactivity and directions. When at a specific station within the network, it will provide more details on that station (Time to next train, best local attraction, best local restaraunt).
 
  **Solution** - This creates simple and convienient navigation access for metro users.
 
