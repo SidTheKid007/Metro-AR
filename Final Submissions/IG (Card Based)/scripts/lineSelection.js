@@ -32,7 +32,7 @@ const stationJSON = {
     'Arcadia' : {
         'Food' : 'Din Tai Fung',
         'Attraction' : 'RaceTrack',
-        'Time' : 110,
+        'Time' : 105,
         'Directions' : {
         	'Compton' : 'Gold Line:\n Arcadia -> Union Station\nRed Line:\n Union Station -> 7th St\nBlue Line:\n 7th St -> Compton'
         }
@@ -40,7 +40,7 @@ const stationJSON = {
     'Metro Center' : {
         'Food' : 'Hatch Yakitori',
         'Attraction' : 'Fine Arts Building',
-        'Time' : 100,
+        'Time' : 95,
         'Directions' : {
         	'Arcadia' : 'Red Line:\n 7th St -> Union Station\Gold Line:\n Union Station -> Arcadia'
         }
@@ -100,7 +100,6 @@ Promise.all([
     const stationBox = objects[7];
     const stationText = objects[8];
     const stationTrain = objects[9];
-    // This asset is called 'The Lonely train', and it is made by curupira. View it here: https://sketchfab.com/3d-models/the-lonely-train-6c63871205ed4f5b96ad5c6cde95ea3b
     const trainTransform = stationTrain.transform;
     const fromLocationText = objects[10];
     const toLocationText = objects[11];
@@ -223,14 +222,14 @@ Promise.all([
             	else {
                     // When the countdown timer hits 0, the train moves and docks in the station
             		stationText.text = 'Train has arrived!';
-            		var trainXPos = -.26 + ((1/50) * (timePassedValue - nextTime))
-            		var trainYPos = .26 - ((1/50) * (timePassedValue - nextTime))
-            		if (trainXPos < .01) {
-            			trainTransform.x = trainXPos
-            		}
-            		if (trainYPos > .01) {
-            			trainTransform.y = trainYPos
-            		}
+            		var trainXPos = -410 + ((20) * (timePassedValue - nextTime))
+                    var trainYPos = 420 - ((20) * (timePassedValue - nextTime))
+                    if (trainXPos < -60) {
+                        trainTransform.x = trainXPos
+                    }
+                    if (trainYPos > 70) {
+                        trainTransform.y = trainYPos
+                    }
             	}
             }
         }
